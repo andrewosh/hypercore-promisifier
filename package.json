@@ -28,6 +28,7 @@
     "tape": "^5.0.1"
   },
   "dependencies": {
+    "call-me-maybe": "^1.0.1",
     "inspect-custom-symbol": "^1.1.1"
   }
 }
