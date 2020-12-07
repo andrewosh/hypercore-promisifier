@@ -6,19 +6,6 @@ const SUPPORTS_PROMISES = Symbol.for('hypercore.promises')
 const CORE = Symbol('hypercore-promisifier.core')
 const REQUEST = Symbol('hypercore-promisifier.request')
 
-const PUBLIC_PROPERTIES = [
-  'key',
-  'discoveryKey',
-  'length',
-  'byteLength',
-  'writable',
-  'sparse',
-  'peers',
-  'valueEncoding',
-  'weak',
-  'lazy'
-]
-
 class BaseWrapper extends EventEmitter {
   constructor (core) {
     super()
@@ -34,14 +21,46 @@ class BaseWrapper extends EventEmitter {
   [inspect] (depth, opts) {
     return this[CORE][inspect](depth, opts)
   }
-}
-for (const prop of PUBLIC_PROPERTIES) {
-  Object.defineProperty(BaseWrapper.prototype, prop, {
-    enumerable: true,
-    get: function () {
-      return this[CORE][prop]
-    }
-  })
+
+  get key () {
+    return this[CORE].key
+  }
+
+  get discoveryKey () {
+    return this[CORE].discoveryKey
+  }
+
+  get length () {
+    return this[CORE].length
+  }
+
+  get byteLength () {
+    return this[CORE].byteLength
+  }
+
+  get writable () {
+    return this[CORE].writable
+  }
+
+  get sparse () {
+    return this[CORE].sparse
+  }
+
+  get peers () {
+    return this[CORE].peers
+  }
+
+  get valueEncoding () {
+    return this[CORE].valueEncoding
+  }
+
+  get weak () {
+    return this[CORE].weak
+  }
+
+  get lazy () {
+    return this[CORE].lazy
+  }
 }
 
 class CallbackToPromiseHypercore extends BaseWrapper {
@@ -93,9 +112,9 @@ class CallbackToPromiseHypercore extends BaseWrapper {
 
   seek (bytes, opts) {
     return new Promise((resolve, reject) => {
-      this[CORE].seek(bytes, opts, (err, pos) => {
+      this[CORE].seek(bytes, opts, (err, index, relativeOffset) => {
         if (err) return reject(err)
-        return resolve(pos)
+        return resolve([index, relativeOffset])
       })
     })
   }
