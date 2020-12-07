@@ -1,4 +1,5 @@
 # hypercore-promisifier
+![Test on Node.js](https://github.com/andrewosh/hypercore-promisifier/workflows/Test%20on%20Node.js/badge.svg)
 
 A wrapper that provides conversion to/from callback/promise interfaces in Hypercore and RemoteHypercore.
 
