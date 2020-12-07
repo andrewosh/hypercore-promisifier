@@ -1,0 +1,30 @@
+{
+  "name": "hypercore-promisifier",
+  "version": "1.0.0",
+  "description": "A Hypercore wrapper that lets you switch between callback and Promise APIs",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard && tape test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andrewosh/hypercore-promisifier.git"
+  },
+  "keywords": [
+    "hypercore",
+    "promises"
+  ],
+  "author": "Andrew Osheroff <andrewosh@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andrewosh/hypercore-promisifier/issues"
+  },
+  "homepage": "https://github.com/andrewosh/hypercore-promisifier#readme",
+  "devDependencies": {
+    "hypercore": "^9.6.0",
+    "hyperspace": "^3.15.0",
+    "ram": "0.0.3",
+    "standard": "^16.0.3",
+    "tape": "^5.0.1"
+  }
+}
