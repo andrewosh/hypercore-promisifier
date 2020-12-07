@@ -80,6 +80,15 @@ class CallbackToPromiseHypercore extends BaseWrapper {
     }))
   }
 
+  close () {
+    return alwaysCatch(new Promise((resolve, reject) => {
+      this[CORE].close(err => {
+        if (err) return reject(err)
+        return resolve(null)
+      })
+    }))
+  }
+
   get (index, opts) {
     let req = null
     const prom = new Promise((resolve, reject) => {
@@ -203,6 +212,10 @@ class PromiseToCallbackHypercore extends BaseWrapper {
 
   ready (cb) {
     return maybeOptional(cb, this[CORE].ready())
+  }
+
+  close (cb) {
+    return maybeOptional(cb, this[CORE].close())
   }
 
   get (index, opts, cb) {
