@@ -1,9 +1,11 @@
-const { EventEmitter }  = require('events')
+const { EventEmitter } = require('events')
 const maybe = require('call-me-maybe')
+const inspect = require('inspect-custom-symbol')
 
-const USES_PROMISES = Symbol('hypercore.uses-promises')
-const CORE = Symbol('hypercore-wrapper.inner')
-const REQUEST = Symbol('hypercore-wrapper.request')
+const SUPPORTS_PROMISES = Symbol.for('hypercore.promises')
+const CORE = Symbol('hypercore-promisifier.core')
+const REQUEST = Symbol('hypercore-promisifier.request')
+
 const PUBLIC_PROPERTIES = [
   'key',
   'discoveryKey',
@@ -14,7 +16,7 @@ const PUBLIC_PROPERTIES = [
   'peers',
   'valueEncoding',
   'weak',
-  'lazy',
+  'lazy'
 ]
 
 class BaseWrapper extends EventEmitter {
@@ -27,6 +29,10 @@ class BaseWrapper extends EventEmitter {
     this.on('removeListener', (eventName, listener) => {
       core.removeListener(eventName, listener)
     })
+  }
+
+  [inspect] (depth, opts) {
+    return this[CORE][inspect](depth, opts)
   }
 }
 for (const prop of PUBLIC_PROPERTIES) {
@@ -41,12 +47,13 @@ for (const prop of PUBLIC_PROPERTIES) {
 class CallbackToPromiseHypercore extends BaseWrapper {
   constructor (core) {
     super(core)
+    this[SUPPORTS_PROMISES] = true
   }
 
   // Async Methods
 
   ready () {
-    return catch(new Promise((resolve, reject) => {
+    return alwaysCatch(new Promise((resolve, reject) => {
       this[CORE].ready(err => {
         if (err) return reject(err)
         return resolve(null)
@@ -67,7 +74,7 @@ class CallbackToPromiseHypercore extends BaseWrapper {
   }
 
   append (batch) {
-    return catch(new Promise((resolve, reject) => {
+    return alwaysCatch(new Promise((resolve, reject) => {
       this[CORE].append(batch, (err, seq) => {
         if (err) return reject(err)
         return resolve(seq)
@@ -76,7 +83,7 @@ class CallbackToPromiseHypercore extends BaseWrapper {
   }
 
   update (opts) {
-    return catch(new Promise((resolve, reject) => {
+    return alwaysCatch(new Promise((resolve, reject) => {
       this[CORE].update(opts, err => {
         if (err) return reject(err)
         return resolve(null)
@@ -95,7 +102,7 @@ class CallbackToPromiseHypercore extends BaseWrapper {
 
   download (range) {
     let req = null
-    const prom = catch(new Promise((resolve, reject) => {
+    const prom = alwaysCatch(new Promise((resolve, reject) => {
       req = this[CORE].download(range, err => {
         if (err) return reject(err)
         return resolve(null)
@@ -133,7 +140,7 @@ class CallbackToPromiseHypercore extends BaseWrapper {
   }
 
   // Sync Methods
-  
+
   createReadStream (opts) {
     return this[CORE].createReadStream(opts)
   }
@@ -170,6 +177,7 @@ class CallbackToPromiseHypercore extends BaseWrapper {
 class PromiseToCallbackHypercore extends BaseWrapper {
   constructor (core) {
     super(core)
+    this[SUPPORTS_PROMISES] = false
   }
 
   // Async Methods
@@ -215,7 +223,7 @@ class PromiseToCallbackHypercore extends BaseWrapper {
   }
 
   // Sync Methods
-  
+
   createReadStream (opts) {
     return this[CORE].createReadStream(opts)
   }
@@ -255,11 +263,11 @@ module.exports = {
 }
 
 function toPromises (core) {
-  return core[USES_PROMISES] ? core : new CallbackToPromiseHypercore(core)
+  return core[SUPPORTS_PROMISES] ? core : new CallbackToPromiseHypercore(core)
 }
 
 function toCallbacks (core) {
-  return core[USES_PROMISES] ? new PromiseToCallbackHypercore(core) : core
+  return core[SUPPORTS_PROMISES] ? new PromiseToCallbackHypercore(core) : core
 }
 
 function maybeOptional (cb, prom) {
@@ -268,7 +276,7 @@ function maybeOptional (cb, prom) {
   return prom
 }
 
-function catch (prom) {
+function alwaysCatch (prom) {
   prom.catch(noop)
   return prom
 }

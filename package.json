@@ -26,5 +26,8 @@
     "ram": "0.0.3",
     "standard": "^16.0.3",
     "tape": "^5.0.1"
+  },
+  "dependencies": {
+    "inspect-custom-symbol": "^1.1.1"
   }
 }
