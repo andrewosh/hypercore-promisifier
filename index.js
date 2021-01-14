@@ -291,7 +291,8 @@ class PromiseToCallbackHypercore extends BaseWrapper {
 
 module.exports = {
   toPromises,
-  toCallbacks
+  toCallbacks,
+  unwrap
 }
 
 function toPromises (core) {
@@ -300,6 +301,10 @@ function toPromises (core) {
 
 function toCallbacks (core) {
   return core[SUPPORTS_PROMISES] ? new PromiseToCallbackHypercore(core) : core
+}
+
+function unwrap (core) {
+  return core[CORE] || core
 }
 
 function maybeOptional (cb, prom) {

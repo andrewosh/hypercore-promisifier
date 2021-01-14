@@ -23,13 +23,15 @@ const wrapper = toPromises(core)
 ## API
 The API supports two methods, each one returning a compatibilty wrapper around Hypercore.
 
-#### `const { toCallbacks, toPromises } = require('hypercore-promisifier')`
+#### `const { toCallbacks, toPromises, unwrap } = require('hypercore-promisifier')`
 
 `toCallbacks(core)` takes a Hypercore-like object with a Promises API, and returns a wrapper with a
 callbacks interfaced.
 
 `toPromises(core)` takes a Hypercore-like object with a callbacks API, and returns a wrapper with a
 Promises interface.
+
+`unwrap(core)` takes either a wrapper object, or a normal Hypercore, and returns a normal (callbacks API) Hypercore.
 
 ## License
 MIT

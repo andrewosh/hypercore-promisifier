@@ -1,9 +1,8 @@
 const test = require('tape')
 const hypercore = require('hypercore')
 const ram = require('random-access-memory')
-// const hyperspaceSimulator = require('hyperspace/simulator')
 
-const { toPromises } = require('..')
+const { toPromises, unwrap } = require('..')
 
 test('cb hypercore -> promises, simple', async t => {
   const core = hypercore(ram, { valueEncoding: 'utf-8' })
@@ -43,5 +42,13 @@ test('double wrapping', async t => {
   await wrapper.append('hello world')
   const block = await wrapper.get(0)
   t.same(block, 'hello world')
+  t.end()
+})
+
+test('can unwrap', async t => {
+  const core = hypercore(ram, { valueEncoding: 'utf-8' })
+  const wrapper = toPromises(toPromises(core))
+  t.same(core, unwrap(wrapper))
+  t.same(core, unwrap(core))
   t.end()
 })
