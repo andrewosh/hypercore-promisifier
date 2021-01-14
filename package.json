@@ -1,6 +1,6 @@
 {
   "name": "hypercore-promisifier",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "A Hypercore wrapper that lets you switch between callback and Promise APIs",
   "main": "index.js",
   "scripts": {
