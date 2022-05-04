@@ -237,7 +237,7 @@ class PromiseToCallbackHypercore extends BaseWrapper {
   }
 
   download (range, cb) {
-    const prom = this[CORE].download(range)
+    const prom = this[CORE].download(range).downloaded()
     maybeOptional(cb, prom)
     return prom
   }
